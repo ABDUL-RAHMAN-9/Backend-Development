@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Abdul Rahman | Backend Core</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #000;
+            --surface: #0a0a0a;
+            --border: #1a1a1a;
+            --accent: #3b82f6;
+            --text-main: #fff;
+            --text-muted: #888;
+            --success: #00ff00;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            /* THE DOTTED BLUEPRINT BACKGROUND */
+            background-image: radial-gradient(circle at 1px 1px, #161616 1px, transparent 0);
+            background-size: 32px 32px;
+            overflow-x: hidden;
+        }
+
+        /* --- THE SMOKE ANIMATION --- */
+        .smoke-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 50%, #1e1b4b 0%, #000 80%);
+            opacity: 0.35;
+            filter: blur(100px);
+            z-index: -1;
+            animation: smokeMove 15s ease-in-out infinite alternate;
+        }
+
+        @keyframes smokeMove {
+            0% {
+                transform: scale(1) translate(0, 0);
+            }
+
+            100% {
+                transform: scale(1.3) translate(5%, 5%);
+            }
+        }
+
+        .spa-container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 0;
+        }
+
+        /* --- Nav --- */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5rem;
+        }
+
+        .logo {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-main);
+        }
+
+        .logo span {
+            color: var(--accent);
+            font-weight: 400;
+        }
+
+        .system-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6rem;
+            color: #444;
+        }
+
+        /* --- Hero Section --- */
+        .hero {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 4rem;
+            align-items: center;
+            min-height: 550px;
+        }
+
+        .hero-content h1 {
+            font-size: clamp(2.5rem, 6vw, 4.2rem);
+            font-weight: 600;
+            letter-spacing: -0.05em;
+            line-height: 0.95;
+            margin-bottom: 2rem;
+        }
+
+        .pop-text {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .pop-text.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .hero-content p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            max-width: 480px;
+            line-height: 1.7;
+            opacity: 0;
+            transition: 0.5s;
+        }
+
+        .hero-content p.active {
+            opacity: 1;
+        }
+
+        /* --- Code Window --- */
+        .window {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.9);
+        }
+
+        .window-header {
+            background: #0d0d0d;
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .dots {
+            display: flex;
+            gap: 8px;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .dot.red {
+            background: #ff5f56;
+        }
+
+        .dot.yellow {
+            background: #ffbd2e;
+        }
+
+        .dot.green {
+            background: #27c93f;
+        }
+
+        .window-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: #444;
+        }
+
+        .window-body {
+            padding: 2.5rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            color: #d1d5db;
+            min-height: 320px;
+        }
+
+        .code-line {
+            display: block;
+            margin-bottom: 5px;
+            opacity: 0;
+            transform: translateX(-10px);
+            transition: 0.3s;
+        }
+
+        .code-line.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .code-kw {
+            color: #818cf8;
+        }
+
+        .code-fn {
+            color: #fbbf24;
+        }
+
+        .code-str {
+            color: #34d399;
+        }
+
+        /* --- INTERACTIVE SECTION (Instruction Bar) --- */
+        .interaction-guide {
+            margin-top: 6rem;
+            padding: 1.5rem 0;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--accent);
+        }
+
+        /* --- 3x3 Grid --- */
+        .nav-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1px;
+            background: var(--border);
+            border: 1px solid var(--border);
+            margin-top: 2rem;
+        }
+
+        .nav-item {
+            background: var(--bg);
+            padding: 2.2rem;
+            cursor: pointer;
+            transition: 0.3s;
+            position: relative;
+        }
+
+        .nav-item:hover {
+            background: #080808;
+        }
+
+        .nav-item.active {
+            background: #0a0a0a;
+        }
+
+        .nav-item.active::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--accent);
+        }
+
+        .nav-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6rem;
+            color: #444;
+            display: block;
+            margin-bottom: 0.6rem;
+        }
+
+        .nav-name {
+            font-weight: 500;
+            font-size: 0.85rem;
+            color: #777;
+        }
+
+        .nav-item.active .nav-name {
+            color: #fff;
+        }
+
+        /* --- CTA FOOTER --- */
+        .footer-cta {
+            margin-top: 10rem;
+            padding: 8rem 2rem;
+            text-align: center;
+            background: linear-gradient(180deg, #000 0%, #1e1b4b 100%);
+            border-top: 1px solid var(--border);
+        }
+
+        .footer-cta h2 {
+            font-size: clamp(2.5rem, 8vw, 4.5rem);
+            font-weight: 600;
+            margin-bottom: 3.5rem;
+            letter-spacing: -3px;
+            line-height: 1;
+        }
+
+        /* --- Technical Stats Bar (Responsive & Minimalist) --- */
+        .technical-stats-bar {
+            margin-top: 5rem;
+            display: flex;
+            justify-content: space-between;
+            background: #050505;
+            border: 1px solid var(--border);
+            padding: 20px;
+            gap: 20px;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex: 1;
+        }
+
+        /* Dividing lines between stats (Blueprint style) */
+        .stat-item:not(:last-child) {
+            border-right: 1px solid var(--border);
+            padding-right: 20px;
+        }
+
+        .stat-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.55rem;
+            color: #444;
+            letter-spacing: 0.15em;
+        }
+
+        .stat-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-main);
+            font-weight: 500;
+        }
+
+        /* Responsive Handling */
+        @media (max-width: 768px) {
+            .technical-stats-bar {
+                flex-direction: column;
+                padding: 25px;
+                gap: 30px;
+            }
+
+            .stat-item:not(:last-child) {
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+                padding-right: 0;
+                padding-bottom: 20px;
+            }
+
+            .stat-value {
+                font-size: 0.8rem;
+            }
+        }
+
+        .btn {
+            background: #fff;
+            color: #000;
+            padding: 18px 45px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            transition: 0.3s;
+            font-size: 1rem;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 40px rgba(255, 255, 255, 0.2);
+        }
+
+        @media (max-width: 900px) {
+            .hero {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .hero-content {
+                align-items: center;
+                order: 2;
+            }
+
+            .window {
+                order: 1;
+            }
+
+            .nav-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="smoke-bg"></div>
+
+    <div class="spa-container">
+        <nav>
+            <div class="logo">CORE.<span>NODE</span></div>
+            <div class="system-tag">BACKEND_ROADMAP // CORE_LEARNING_RESOURCES</div>
+        </nav>
+
+        <section class="hero">
+            <div class="hero-content">
+                <h1 id="slide-title" class="pop-text active">Set context.<br>Get answers.</h1>
+                <p id="slide-desc" class="active">Documenting my journey through the Node.js V8 runtime. High-level
+                    architecture built entirely on native core modules.</p>
+                <div style="margin-top: 2rem;">
+                    <a href="https://github.com/ABDUL-RAHMAN-9" target="_blank" class="btn"
+                        style="padding: 12px 28px; font-size: 0.85rem;">View Github &rarr;</a>
+                </div>
+            </div>
+
+            <div class="window">
+                <div class="window-header">
+                    <div class="dots">
+                        <div class="dot red"></div>
+                        <div class="dot yellow"></div>
+                        <div class="dot green"></div>
+                    </div>
+                    <div class="window-title" id="window-filename">app.js</div>
+                </div>
+                <div class="window-body" id="code-display">
+                    <!-- Dynamic code rendering -->
+                </div>
+            </div>
+        </section>
+
+        <!-- TECHNICAL AUDIT BAR: Meaningful project metadata -->
+        <div class="technical-stats-bar">
+            <div class="stat-item">
+                <span class="stat-label">FOCUS_AREA</span>
+                <span class="stat-value">BACKEND_CORE</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">CURRICULUM_TOTAL</span>
+                <span class="stat-value">09_TECHNICAL_MODULES</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">INSPECTOR_MODE</span>
+                <span class="stat-value">DBL_CLICK_TO_VIEW_SOURCE</span>
+            </div>
+        </div>
+
+        <div class="nav-grid">
+            <div class="nav-item active" onclick="setSlide(0)" ondblclick="viewCode(0)"><span class="nav-label">01 //
+                    NETWORKING</span>
+                <div class="nav-name">APP_ENGINE</div>
+            </div>
+            <div class="nav-item" onclick="setSlide(1)" ondblclick="viewCode(1)"><span class="nav-label">02 //
+                    STREAMS</span>
+                <div class="nav-name">FS_PIPELINE</div>
+            </div>
+            <div class="nav-item" onclick="setSlide(2)" ondblclick="viewCode(2)"><span class="nav-label">03 //
+                    DIAGNOSTICS</span>
+                <div class="nav-name">OS_AUDITOR</div>
+            </div>
+            <div class="nav-item" onclick="setSlide(3)" ondblclick="viewCode(3)"><span class="nav-label">04 //
+                    EVENTS</span>
+                <div class="nav-name">ASYNC_BUS</div>
+            </div>
+            <div class="nav-item" onclick="setSlide(4)" ondblclick="viewCode(4)"><span class="nav-label">05 //
+                    SECURITY</span>
+                <div class="nav-name">PATH_RESOLVER</div>
+            </div>
+            <div class="nav-item" onclick="setSlide(5)" ondblclick="viewCode(5)"><span class="nav-label">06 //
+                    API</span>
+                <div class="nav-name">HTTP_CLIENT</div>
+            </div>
+            <div class="nav-item" onclick="setSlide(6)" ondblclick="viewCode(6)"><span class="nav-label">07 //
+                    LOGIC</span>
+                <div class="nav-name">URL_PARSER</div>
+            </div>
+            <div class="nav-item" onclick="setSlide(7)" ondblclick="viewCode(7)"><span class="nav-label">08 //
+                    MODULES</span>
+                <div class="nav-name">ENTRY_POINT</div>
+            </div>
+            <div class="nav-item" onclick="setSlide(8)" ondblclick="viewCode(8)"><span class="nav-label">09 //
+                    UTILITY</span>
+                <div class="nav-name">EXPORT_CORE</div>
+            </div>
+        </div>
+    </div>
+
+    <section class="footer-cta">
+        <h2>Master the logic.<br>Explore the learning modules.</h2>
+        <a href="https://github.com/ABDUL-RAHMAN-9/Backend-Development" target="_blank" class="btn">Explore
+            Repository</a>
+        <p style="margin-top: 4rem; color: #444; font-family: monospace; font-size: 0.7rem; letter-spacing: 0.1em;">
+            © 2026 // NODE.JS BACKEND LEARNING HUB // ARCHITECTED BY ABDUL RAHMAN
+        </p>
+    </section>
+    <script>
+        const content = [
+            {
+                title: "Networking.",
+                desc: "Native HTTP routing engine optimized for the V8 runtime. Built with surgical precision.",
+                file: "core-engine/app.js",
+                lines: [
+                    `<span class="code-kw">const</span> server = http.<span class="code-fn">createServer</span>((req, res) => {`,
+                    `  res.<span class="code-fn">writeHead</span>(200, { <span class="code-str">'Content-Type'</span>: <span class="code-str">'text/html'</span> });`,
+                    `  <span class="code-kw">if</span> (req.url === <span class="code-str">'/api'</span>) {`,
+                    `    res.<span class="code-fn">end</span>(JSON.<span class="code-fn">stringify</span>({ status: <span class="code-str">'active'</span> }));`,
+                    `  } <span class="code-kw">else</span> {`,
+                    `    <span class="code-fn">serveStatic</span>(res, <span class="code-str">'index.html'</span>);`,
+                    `  }`,
+                    `}).<span class="code-fn">listen</span>(3000, () => <span class="code-fn">log</span>(<span class="code-str">'Ready'</span>));`
+                ],
+            },
+            {
+                title: "Streaming.",
+                desc: "Implementing fs.createReadStream to process gigabyte files with constant memory footprint.",
+                file: "data-management/fsmodule.js",
+                lines: [
+                    `<span class="code-kw">const</span> stream = fs.<span class="code-fn">createReadStream</span>(path, { highWaterMark: 64 });`,
+                    `stream.<span class="code-fn">on</span>(<span class="code-str">'data'</span>, (chunk) => {`,
+                    `  <span class="code-kw">const</span> buffer = Buffer.<span class="code-fn">from</span>(chunk);`,
+                    `  process.<span class="code-fn">stdout.write</span>(\`Processing: \${buffer.length} bytes\`);`,
+                    `});`,
+                    `stream.<span class="code-fn">on</span>(<span class="code-str">'end'</span>, () => <span class="code-fn">log</span>(<span class="code-str">'Stream finalized'</span>));`,
+                    `stream.<span class="code-fn">on</span>(<span class="code-str">'error'</span>, (err) => <span class="code-fn">log</span>(err.message));`
+                ],
+            },
+            {
+                title: "Diagnostics.",
+                desc: "Direct hardware interrogation via the OS module. Providing real-time CPU and RAM visibility.",
+                file: "system-logic/osModule.js",
+                lines: [
+                    `<span class="code-kw">const</span> getMetrics = () => ({`,
+                    `  arch: os.<span class="code-fn">arch</span>(),`,
+                    `  platform: os.<span class="code-fn">platform</span>(),`,
+                    `  cpu: os.<span class="code-fn">cpus</span>()[0].model,`,
+                    `  uptime: (os.<span class="code-fn">uptime</span>() / 3600).<span class="code-fn">toFixed</span>(2) + <span class="code-str">' hours'</span>,`,
+                    `  memory: (os.<span class="code-fn">totalmem</span>() / 1e9).<span class="code-fn">toFixed</span>(2) + <span class="code-str">' GB'</span>`,
+                    `});`,
+                    `<span class="code-fn">log</span>(<span class="code-str">'Hardware Audit'</span>, <span class="code-fn">getMetrics</span>());`
+                ],
+            },
+            {
+                title: "Event Bus.",
+                desc: "Utilizing custom EventEmitter classes to build decoupled, event-driven architectures.",
+                file: "system-logic/nodeJsEvents.js",
+                lines: [
+                    `<span class="code-kw">class</span> SystemMonitor <span class="code-kw">extends</span> EventEmitter {}`,
+                    `<span class="code-kw">const</span> monitor = <span class="code-kw">new</span> <span class="code-fn">SystemMonitor</span>();`,
+                    `monitor.<span class="code-fn">on</span>(<span class="code-str">'log_event'</span>, (msg, level) => {`,
+                    `  <span class="code-fn">console.log</span>(\`[\${level}] \${msg} at \${<span class="code-kw">new</span> <span class="code-fn">Date</span>()}\`);`,
+                    `});`,
+                    `monitor.<span class="code-fn">emit</span>(<span class="code-str">'log_event'</span>, <span class="code-str">'Kernel Initalized'</span>, <span class="code-str">'INFO'</span>);`,
+                    `monitor.<span class="code-fn">emit</span>(<span class="code-str">'log_event'</span>, <span class="code-str">'High Latency'</span>, <span class="code-str">'WARN'</span>);`
+                ],
+            },
+            {
+                title: "Security.",
+                desc: "Advanced path resolution logic designed to thwart Directory Traversal attacks.",
+                file: "data-management/pathModule.js",
+                lines: [
+                    `<span class="code-kw">const</span> safePath = path.<span class="code-fn">join</span>(__dirname, <span class="code-str">'storage'</span>);`,
+                    `<span class="code-kw">const</span> requested = path.<span class="code-fn">resolve</span>(userInput);`,
+                    `<span class="code-kw">const</span> isSecure = requested.<span class="code-fn">startsWith</span>(safePath);`,
+                    `<span class="code-kw">if</span> (!isSecure) {`,
+                    `  <span class="code-kw">throw new</span> <span class="code-fn">Error</span>(<span class="code-str">'Path Traversal Detected'</span>);`,
+                    `} <span class="code-kw">else</span> {`,
+                    `  <span class="code-fn">readFile</span>(requested);`,
+                    `}`]
+            },
+            {
+                title: "API Client.",
+                desc: "A custom native client built to fetch and process REST data using streams and buffers.",
+                file: "core-engine/httpModule.js",
+                lines: [
+                    `https.<span class="code-fn">get</span>(apiUrl, (res) => {`,
+                    `  <span class="code-kw">let</span> rawBody = <span class="code-str">''</span>;`,
+                    `  res.<span class="code-fn">on</span>(<span class="code-str">'data'</span>, (chunk) => rawBody += chunk);`,
+                    `  res.<span class="code-fn">on</span>(<span class="code-str">'end'</span>, () => {`,
+                    `    <span class="code-kw">const</span> data = JSON.<span class="code-fn">parse</span>(rawBody);`,
+                    `    <span class="code-fn">resolve</span>(data);`,
+                    `  });`,
+                    `}).<span class="code-fn">on</span>(<span class="code-str">'error'</span>, (e) => <span class="code-fn">reject</span>(e));`
+                ],
+            },
+            {
+                title: "Analysis.",
+                desc: "Implementing WHATWG standards to sanitize query parameters and validate redirect domains.",
+                file: "core-engine/urlModule.js",
+                lines: [
+                    `<span class="code-kw">const</span> myUrl = <span class="code-kw">new</span> <span class="code-fn">URL</span>(<span class="code-str">'https://api. Rahman.dev?id=123'</span>);`,
+                    `myUrl.searchParams.<span class="code-fn">append</span>(<span class="code-str">'token'</span>, <span class="code-str">'secure_0x1'</span>);`,
+                    `myUrl.searchParams.<span class="code-fn">forEach</span>((val, key) => {`,
+                    `  <span class="code-fn">console.log</span>(\`Key: \${key} | Value: \${val}\`);`,
+                    `});`,
+                    `<span class="code-fn">log</span>(myUrl.origin);`,
+                    `<span class="code-fn">log</span>(myUrl.hostname);`
+                ],
+            },
+            {
+                title: "Modules.",
+                desc: "Dependency orchestration using modern import/export patterns for modular codebases.",
+                file: "module-system/Modulefile1.js",
+                lines: [
+                    `<span class="code-kw">import</span> mainTool, { version, helper } <span class="code-kw">from</span> <span class="code-str">'./utils.js'</span>;`,
+                    `<span class="code-kw">import</span> * <span class="code-kw">as</span> core <span class="code-kw">from</span> <span class="code-str">'./logic.js'</span>;`,
+                    `<span class="code-fn">log</span>(\`Booting Module v\${version}\`);`,
+                    `<span class="code-kw">if</span> (<span class="code-fn">helper</span>.isValid()) {`,
+                    `  <span class="code-fn">mainTool</span>.execute();`,
+                    `  <span class="code-fn">core</span>.process();`,
+                    `}`
+                ],
+            },
+            {
+                title: "Exports.",
+                desc: "Mastering advanced exports (Named, Default, Class) to build reusable technical cores.",
+                file: "module-system/Modulefile2.js",
+                lines: [
+                    `<span class="code-kw">export class</span> DataFormatter {`,
+                    `  <span class="code-fn">constructor</span>(v) { <span class="code-kw">this</span>.v = v; }`,
+                    `  <span class="code-fn">format</span>() { <span class="code-kw">return this</span>.v.<span class="code-fn">trim</span>(); }`,
+                    `}`,
+                    `<span class="code-kw">export const</span> version = <span class="code-str">'2.0.26'</span>;`,
+                    `<span class="code-kw">export default</span> {`,
+                    `  init: () => <span class="code-fn">log</span>(<span class="code-str">'Library Loaded'</span>)`,
+                    `};`
+                ],
+            },
+        ];
+
+        let idx = 0;
+        const gitBase = "https://github.com/ABDUL-RAHMAN-9/Backend-Development/blob/main/";
+        const fileLinks = [
+            "core-engine/app.js", "core-engine/httpModule.js", "core-engine/urlModule.js",
+            "data-management/fsmodule.js", "data-management/pathModule.js",
+            "system-logic/nodeJsEvents.js", "system-logic/osModule.js",
+            "module-system/Modulefile1.js", "module-system/Modulefile2.js"
+        ];
+
+        function setSlide(n)
+        {
+            idx = n;
+            const data = content[n];
+            const title = document.getElementById('slide-title');
+            const desc = document.getElementById('slide-desc');
+            const codeBody = document.getElementById('code-display');
+
+            title.classList.remove('active'); desc.classList.remove('active');
+
+            setTimeout(() =>
+            {
+                title.innerHTML = data.title;
+                desc.innerText = data.desc;
+                document.getElementById('window-filename').innerText = data.file;
+                codeBody.innerHTML = data.lines.map((l, i) => `<span class="code-line" style="transition-delay: ${i * 100}ms">${l}</span>`).join('');
+                setTimeout(() => document.querySelectorAll('.code-line').forEach(l => l.classList.add('active')), 50);
+                title.classList.add('active');
+                desc.classList.add('active');
+            }, 300);
+
+            document.querySelectorAll('.nav-item').forEach((item, i) => item.classList.toggle('active', i === n));
+        }
+
+        function viewCode(n)
+        {
+            const target = n !== undefined ? n : idx;
+            window.open(gitBase + fileLinks[target], '_blank');
+        }
+
+        setSlide(0);
+        setInterval(() => { idx = (idx + 1) % content.length; setSlide(idx); }, 3000);
+    </script>
+</body>
+
+</html>
