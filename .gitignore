@@ -1,0 +1,18 @@
+# --- Project Specific Ignores ---
+# Ignore the temporary sandbox folder and everything inside it
+sandbox/
+
+# Ignore local environment variables (if we add them later)
+.env
+
+# --- Node.js Ignores ---
+# Never commit the massive node_modules folder
+node_modules/
+package-lock.json
+
+# --- OS/IDE Ignores ---
+.vscode/
+.DS_Store
+
+# Ignore temporary files created by editors or runners
+tempCodeRunnerFile.js
