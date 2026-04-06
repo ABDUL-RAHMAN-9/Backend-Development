@@ -108,6 +108,12 @@ To explore these modules locally, follow these steps:
    
 ---
 
+## License
+Distributed under the **MIT License**. This project is open-source and free to use. 
+See the [LICENSE](./LICENSE) for full legal text.
+
+---
+
 ## Architected by **[Abdul Rahman](https://github.com/ABDUL-RAHMAN-9)**  
 _Principal Backend Explorer | Engineering the core of the modern web._
 
