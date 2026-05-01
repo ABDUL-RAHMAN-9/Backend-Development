@@ -115,7 +115,4 @@ See the [LICENSE](./LICENSE) for full legal text.
 ---
 
 ## Architected by **[Abdul Rahman](https://github.com/ABDUL-RAHMAN-9)**  
-_Principal Backend Explorer | Engineering the core of the modern web._
-
-> "Passionate about building scalable backend solutions and learning the intricacies of Node.js."
 
