@@ -96,7 +96,7 @@ To explore these modules locally, follow these steps:
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/ABDUL-RAHMAN-9/Backend-Development.git
+   git clone https://github.com/abdul-rahman-0x/Backend-Development.git
 
 2. **Execute the Core Server:**
    ```bash
@@ -114,5 +114,5 @@ See the [LICENSE](./LICENSE) for full legal text.
 
 ---
 
-## Architected by **[Abdul Rahman](https://github.com/ABDUL-RAHMAN-9)**  
+## Architected by **[Abdul Rahman](https://github.com/abdul-rahman-0x)**  
 
